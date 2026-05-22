@@ -4,9 +4,9 @@ pymysql.install_as_MySQLdb()
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_mail import Mail, Message
 import os
 import random
+import requests
 app = Flask(__name__)
 app.secret_key = "clave_secreta_open_library"
 
@@ -18,24 +18,56 @@ app.config['MYSQL_DB'] = os.getenv('MYSQLDATABASE')
 app.config['MYSQL_PORT'] = int(os.getenv('MYSQLPORT', 3306))
 
 mysql = MySQL(app)
-# ---------------- CORREO ----------------
-app.config["MAIL_SERVER"] = "smtp-relay.brevo.com"
-app.config["MAIL_PORT"] = 2525
-app.config["MAIL_USE_TLS"] = True
-app.config["MAIL_USE_SSL"] = False
-
-app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
-app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
-
-app.config["MAIL_DEFAULT_SENDER"] = "virtualbiblioteca006@gmail.com"
-
-app.config["MAIL_TIMEOUT"] = 10
-app.config["MAIL_MAX_EMAILS"] = None
-app.config["MAIL_ASCII_ATTACHMENTS"] = False
-
-mail = Mail(app)
+# ---------------- CORREO BREVO API ----------------
 
 CORREO_ADMIN = "virtualbiblioteca006@gmail.com"
+
+
+def enviar_correo(destinatario, asunto, contenido):
+    url = "https://api.brevo.com/v3/smtp/email"
+
+    api_key = os.getenv("BREVO_API_KEY")
+
+    if not api_key:
+        print("ERROR BREVO: falta la variable BREVO_API_KEY en Railway")
+        return False
+
+    headers = {
+        "accept": "application/json",
+        "api-key": api_key,
+        "content-type": "application/json"
+    }
+
+    data = {
+        "sender": {
+            "name": "MY BIBLIOTECA",
+            "email": CORREO_ADMIN
+        },
+        "to": [
+            {
+                "email": destinatario
+            }
+        ],
+        "subject": asunto,
+        "textContent": contenido
+    }
+
+    try:
+        response = requests.post(
+            url,
+            headers=headers,
+            json=data,
+            timeout=15
+        )
+
+        print("BREVO STATUS:", response.status_code)
+        print("BREVO RESPUESTA:", response.text)
+
+        return response.status_code in [200, 201, 202]
+
+    except Exception as e:
+        print("ERROR ENVIANDO CORREO POR BREVO API:", e)
+        return False
 
 @app.route("/")
 def index():
@@ -504,11 +536,8 @@ def admin_enviar_libro(prestamo_id):
     )
 
     try:
-        mensaje_cliente = Message(
-            subject="Verificación de entrega - MY BIBLIOTECA",
-            recipients=[prestamo[8]]
-        )
-        mensaje_cliente.body = f"""
+        asunto = "Verificación de entrega - MY BIBLIOTECA"
+        contenido = f"""
 Hola {prestamo[2]}.
 
 El administrador ya dio la orden de enviar el libro: {prestamo[4]}.
@@ -525,7 +554,10 @@ Después de verificar, el libro quedará marcado como PRESTADO en el sistema.
 
 Gracias por usar MY BIBLIOTECA.
 """
-        mail.send(mensaje_cliente)
+        correo_enviado = enviar_correo(prestamo[8], asunto, contenido)
+
+        if not correo_enviado:
+            raise Exception("Brevo no pudo enviar el correo de verificación")
 
         cur.execute("""
             UPDATE prestamos
@@ -538,7 +570,7 @@ Gracias por usar MY BIBLIOTECA.
 
     except Exception as e:
         print("ERROR ENVIANDO CORREO DE VERIFICACIÓN:", e)
-        flash("No se pudo enviar el correo de verificación. Revisa la configuración de Flask-Mail")
+        flash("No se pudo enviar el correo de verificación. Revisa la configuración de Brevo")
 
     cur.close()
     return redirect(url_for("admin_solicitudes"))
@@ -584,12 +616,8 @@ def admin_recoger_libro(prestamo_id):
     )
 
     try:
-        mensaje_cliente = Message(
-            subject="Verificación de devolución - MY BIBLIOTECA",
-            recipients=[prestamo[5]]
-        )
-
-        mensaje_cliente.body = f"""
+        asunto = "Verificación de devolución - MY BIBLIOTECA"
+        contenido = f"""
 Hola {prestamo[2]}.
 
 El administrador ya dio la orden de recoger el libro: {prestamo[4]}.
@@ -602,7 +630,10 @@ Después de confirmar, el libro quedará devuelto y disponible en el sistema.
 
 Gracias por usar MY BIBLIOTECA.
 """
-        mail.send(mensaje_cliente)
+        correo_enviado = enviar_correo(prestamo[5], asunto, contenido)
+
+        if not correo_enviado:
+            raise Exception("Brevo no pudo enviar el correo de devolución")
 
         cur.execute("""
             UPDATE prestamos
@@ -815,12 +846,8 @@ def recuperar_password():
         session["correo_recuperacion"] = correo
 
         try:
-            mensaje = Message(
-                subject="Código de recuperación - MY BIBLIOTECA",
-                recipients=[correo]
-            )
-
-            mensaje.body = f"""
+            asunto = "Código de recuperación - MY BIBLIOTECA"
+            contenido = f"""
 Hola {usuario[1]}.
 
 Recibimos una solicitud para recuperar tu contraseña.
@@ -836,14 +863,17 @@ Si no solicitaste este cambio, ignora este mensaje.
 MY BIBLIOTECA
 """
 
-            mail.send(mensaje)
+            correo_enviado = enviar_correo(correo, asunto, contenido)
+
+            if not correo_enviado:
+                raise Exception("Brevo no pudo enviar el código")
 
             flash("Te enviamos un código de recuperación al correo")
             return redirect(url_for("verificar_codigo"))
 
         except Exception as e:
             print("ERROR ENVIANDO CÓDIGO:", e)
-            flash("No se pudo enviar el correo. Revisa la configuración de Flask-Mail")
+            flash("No se pudo enviar el correo. Revisa la configuración de Brevo")
             return redirect(url_for("recuperar_password"))
 
     return render_template("recuperar_password.html")
@@ -1086,12 +1116,8 @@ def prestar(id):
 
         try:
 
-            mensaje_admin = Message(
-                subject="Nueva solicitud de préstamo",
-                recipients=[CORREO_ADMIN]
-            )
-
-            mensaje_admin.body = f"""
+            asunto = "Nueva solicitud de préstamo"
+            contenido = f"""
 Nueva solicitud de préstamo.
 
 Nombre: {nombre}
@@ -1107,7 +1133,7 @@ El usuario debe pagar este valor al domiciliario cuando reciba el libro.
 Entra al panel de administrador y presiona ENVIAR LIBRO.
 """
 
-            mail.send(mensaje_admin)
+            enviar_correo(CORREO_ADMIN, asunto, contenido)
 
         except Exception as e:
             print("ERROR AVISANDO AL ADMIN:", e)
@@ -1188,12 +1214,8 @@ def confirmar_entrega(prestamo_id):
     mysql.connection.commit()
 
     try:
-        mensaje_admin = Message(
-            subject="Libro confirmado como entregado",
-            recipients=[CORREO_ADMIN]
-        )
-
-        mensaje_admin.body = f"""
+        asunto = "Libro confirmado como entregado"
+        contenido = f"""
 El usuario confirmó que recibió el libro.
 
 Usuario: {prestamo[7]}
@@ -1203,7 +1225,7 @@ Libro: {prestamo[4]}
 Ahora aparece como libro prestado.
 """
 
-        mail.send(mensaje_admin)
+        enviar_correo(CORREO_ADMIN, asunto, contenido)
 
     except Exception as e:
         print("ERROR ENVIANDO CORREO AL ADMIN:", e)
@@ -1264,12 +1286,8 @@ def devolver(id):
     mysql.connection.commit()
 
     try:
-        mensaje_admin = Message(
-            subject="Nueva solicitud de devolución",
-            recipients=[CORREO_ADMIN]
-        )
-
-        mensaje_admin.body = f"""
+        asunto = "Nueva solicitud de devolución"
+        contenido = f"""
 Nueva solicitud de devolución.
 
 Usuario: {nombre}
@@ -1279,7 +1297,7 @@ Libro: {libro[1]}
 Entra al panel de administrador y presiona RECOGER LIBRO para enviarle el correo de verificación al cliente.
 """
 
-        mail.send(mensaje_admin)
+        enviar_correo(CORREO_ADMIN, asunto, contenido)
 
     except Exception as e:
         print("ERROR ENVIANDO CORREO AL ADMIN:", e)
@@ -1339,12 +1357,8 @@ def confirmar_devolucion(prestamo_id):
     mysql.connection.commit()
 
     try:
-        mensaje_admin = Message(
-            subject="Libro confirmado como devuelto",
-            recipients=[CORREO_ADMIN]
-        )
-
-        mensaje_admin.body = f"""
+        asunto = "Libro confirmado como devuelto"
+        contenido = f"""
 El usuario confirmó que ya entregó el libro.
 
 Usuario: {prestamo[5]}
@@ -1354,7 +1368,7 @@ Libro: {prestamo[4]}
 El libro ya quedó disponible nuevamente.
 """
 
-        mail.send(mensaje_admin)
+        enviar_correo(CORREO_ADMIN, asunto, contenido)
 
     except Exception as e:
         print("ERROR ENVIANDO CORREO AL ADMIN:", e)
