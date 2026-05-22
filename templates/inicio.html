@@ -2,338 +2,326 @@
 
 {% block content %}
 
-<main class="dashboard">
+<section class="welcome">
 
-    <section class="welcome">
+    <div>
+        <h1>Bienvenido a tu Biblioteca Virtual</h1>
 
-        <div>
-            <h1>Bienvenido a tu Biblioteca Virtual</h1>
+        <p>
+            Explora, toma prestados y devuelve libros digitales fácilmente.
+        </p>
+    </div>
 
-            <p>
-                Explora, toma prestados y devuelve libros digitales fácilmente.
-            </p>
-        </div>
+    <div class="stats">
 
-        <div class="stats">
+        <a href="{{ url_for('inicio') }}" class="stat-card stat-link">
+            <span>📚</span>
 
-            <a href="{{ url_for('inicio') }}" class="stat-card stat-link">
-                <span>📚</span>
+            <div>
+                <h3>Total de libros</h3>
+                <strong>{{ total_libros }}</strong>
+                <p>Ver todos los libros</p>
+            </div>
+        </a>
 
-                <div>
-                    <h3>Total de libros</h3>
-                    <strong>{{ total_libros }}</strong>
-                    <p>Ver todos los libros</p>
-                </div>
-            </a>
+        <a href="{{ url_for('inicio', estado='prestados') }}" class="stat-card stat-link">
+            <span>📕</span>
 
-            <a href="{{ url_for('inicio', estado='prestados') }}" class="stat-card stat-link">
-                <span>📕</span>
+            <div>
+                <h3>Libros prestados</h3>
+                <strong>{{ total_prestados }}</strong>
+                <p>Ver libros prestados</p>
+            </div>
+        </a>
 
-                <div>
-                    <h3>Libros prestados</h3>
-                    <strong>{{ total_prestados }}</strong>
-                    <p>Ver libros prestados</p>
-                </div>
-            </a>
+        <a href="{{ url_for('inicio', estado='disponibles') }}" class="stat-card stat-link">
+            <span>✅</span>
 
-            <a href="{{ url_for('inicio', estado='disponibles') }}" class="stat-card stat-link">
-                <span>✅</span>
+            <div>
+                <h3>Libros disponibles</h3>
+                <strong>{{ disponibles }}</strong>
+                <p>Ver disponibles</p>
+            </div>
+        </a>
 
-                <div>
-                    <h3>Libros disponibles</h3>
-                    <strong>{{ disponibles }}</strong>
-                    <p>Ver disponibles</p>
-                </div>
-            </a>
+    </div>
 
-        </div>
-
-    </section>
+</section>
 
 
-    <section class="filters">
+<section class="filters">
 
-        <form method="GET">
+    <form method="GET">
 
-            <input
-                type="text"
-                name="buscar"
-                placeholder="Buscar por título, autor o categoría..."
-                value="{{ buscar }}"
-            >
+        <input
+            type="text"
+            name="buscar"
+            placeholder="Buscar por título, autor o categoría..."
+            value="{{ buscar }}"
+        >
 
-            <button type="submit">
-                Buscar
-            </button>
+        <button type="submit">
+            Buscar
+        </button>
 
-            <select name="categoria" onchange="this.form.submit()">
+        <select name="categoria" onchange="this.form.submit()">
 
-                <option value="">
-                    Todas las categorías
+            <option value="">
+                Todas las categorías
+            </option>
+
+            {% for cat in categorias %}
+
+                <option
+                    value="{{ cat[0] }}"
+                    {% if categoria == cat[0] %}selected{% endif %}
+                >
+                    {{ cat[0] }}
                 </option>
 
-                {% for cat in categorias %}
+            {% endfor %}
 
-                    <option
-                        value="{{ cat[0] }}"
-                        {% if categoria == cat[0] %}selected{% endif %}
-                    >
-                        {{ cat[0] }}
-                    </option>
+        </select>
 
-                {% endfor %}
+    </form>
 
-            </select>
+</section>
 
-        </form>
 
-    </section>
+<section class="catalogo">
 
+    {% if estado == 'prestados' %}
+        <h2>📕 Libros prestados</h2>
+    {% elif estado == 'disponibles' %}
+        <h2>✅ Libros disponibles</h2>
+    {% else %}
+        <h2>📚 Catálogo de libros</h2>
+    {% endif %}
 
-    <section class="catalogo">
+    <div class="books-grid">
 
-        {% if estado == 'prestados' %}
-            <h2>📕 Libros prestados</h2>
-        {% elif estado == 'disponibles' %}
-            <h2>✅ Libros disponibles</h2>
-        {% else %}
-            <h2>📚 Catálogo de libros</h2>
-        {% endif %}
+        {% for libro in libros %}
 
-        <div class="books-grid">
+        <div class="book-card">
 
-            {% for libro in libros %}
+            {% if libro[1] == 'El principito' %}
 
-            <div class="book-card">
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/principito.jpg'"
+            >
 
-                {% if libro[1] == 'El principito' %}
+            {% elif libro[1] == 'Cien años de soledad' %}
 
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/principito.jpg'"
-                >
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/cien_anos.jpg'"
+            >
 
-                {% elif libro[1] == 'Cien años de soledad' %}
+            {% elif libro[1] == 'Don Quijote de la Mancha' %}
 
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/cien_anos.jpg'"
-                >
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/quijote.jpg'"
+            >
 
-                {% elif libro[1] == 'Don Quijote de la Mancha' %}
+            {% elif libro[1] == 'La Odisea' %}
 
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/quijote.jpg'"
-                >
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/odisea.jpg'"
+            >
 
-                {% elif libro[1] == 'La Odisea' %}
+            {% elif libro[1] == 'Harry Potter y la piedra filosofal' %}
 
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/odisea.jpg'"
-                >
-
-                {% elif libro[1] == 'Harry Potter y la piedra filosofal' %}
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/harry.jpg'"
+            >
+
+            {% elif libro[1] == 'Orgullo y prejuicio' %}
 
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/harry.jpg'"
-                >
-
-                {% elif libro[1] == 'Orgullo y prejuicio' %}
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/orgullo.jpg'"
+            >
+
+            {% elif libro[1] == 'Crónica de una muerte anunciada' %}
 
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/orgullo.jpg'"
-                >
-
-                {% elif libro[1] == 'Crónica de una muerte anunciada' %}
-
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/cronica.jpg'"
-                >
-
-                {% elif libro[1] == 'El Hobbit' %}
-
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/hobbit.jpg'"
-                >
-
-                {% elif libro[1] == 'Drácula' %}
-
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/dracula.jpg'"
-                >
-
-                {% elif libro[1] == 'Romeo y Julieta' %}
-
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/romeo.jpg'"
-                >
-
-                {% elif libro[1] == 'Moby Dick' %}
-
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/mobydick.jpg'"
-                >
-
-                {% elif libro[1] == 'El retrato de Dorian Gray' %}
-
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/dorian.jpg'"
-                >
-
-                {% elif libro[1] == 'Alicia en el país de las maravillas' %}
-
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/alicia.jpg'"
-                >
-
-                {% elif libro[1] == 'Los juegos del hambre' %}
-
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/hambre.jpg'"
-                >
-
-                {% elif libro[1] == 'It' %}
-
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/it.jpg'"
-                >
-
-                {% elif libro[1] == 'Percy Jackson' %}
-
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/percy.jpg'"
-                >
-
-                {% elif libro[1] == 'El código Da Vinci' %}
-
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/davinci.jpg'"
-                >
-
-                {% elif libro[1] == 'La Divina Comedia' %}
-
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/comedia.jpg'"
-                >
-
-                {% elif libro[1] == 'Sherlock Holmes' %}
-
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/sherlock.jpg'"
-                >
-
-                {% elif libro[1] == 'Frankenstein' %}
-
-                <img
-                    class="book-img"
-                    src="{{ url_for('static', filename=libro[6]) }}"
-                    alt="{{ libro[1] }}"
-                    onerror="this.src='/static/img/frankenstein.jpg'"
-                >
-
-                {% else %}
-
-                <img
-                    class="book-img"
-                    src="/static/img/principito.jpg"
-                    alt="Libro"
-                >
-
-                {% endif %}
-
-                <div class="book-info">
-
-                    <h3>{{ libro[1] }}</h3>
-
-                    <p>{{ libro[2] }}</p>
-
-                    <small>{{ libro[3] }}</small>
-
-                    <p>
-                        <b>Total:</b> {{ libro[4] }}
-                    </p>
-
-                    <p>
-                        <b>Prestados:</b> {{ libro[5] }}
-                    </p>
-
-                    <p class="precio-libro">
-                        <b>Valor préstamo:</b> ${{ libro[8] }}
-                    </p>
-
-                    <p class="available">
-                        <b>Disponibles:</b>
-                        {{ libro[4] - libro[5] }}
-                    </p>
-
-                    <div class="buttons">
-
-                        {% if libro[4] - libro[5] > 0 %}
-
-                            <a
-                                class="btn-prestar"
-                                href="{{ url_for('prestar', id=libro[0]) }}"
-                            >
-                                Prestar
-                            </a>
-
-                        {% endif %}
-
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/cronica.jpg'"
+            >
+
+            {% elif libro[1] == 'El Hobbit' %}
+
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/hobbit.jpg'"
+            >
+
+            {% elif libro[1] == 'Drácula' %}
+
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/dracula.jpg'"
+            >
+
+            {% elif libro[1] == 'Romeo y Julieta' %}
+
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/romeo.jpg'"
+            >
+
+            {% elif libro[1] == 'Moby Dick' %}
+
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/mobydick.jpg'"
+            >
+
+            {% elif libro[1] == 'El retrato de Dorian Gray' %}
+
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/dorian.jpg'"
+            >
+
+            {% elif libro[1] == 'Alicia en el país de las maravillas' %}
+
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/alicia.jpg'"
+            >
+
+            {% elif libro[1] == 'Los juegos del hambre' %}
+
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/hambre.jpg'"
+            >
+
+            {% elif libro[1] == 'It' %}
+
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/it.jpg'"
+            >
+
+            {% elif libro[1] == 'Percy Jackson' %}
+
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/percy.jpg'"
+            >
+
+            {% elif libro[1] == 'El código Da Vinci' %}
+
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/davinci.jpg'"
+            >
+
+            {% elif libro[1] == 'La Divina Comedia' %}
+
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/comedia.jpg'"
+            >
+
+            {% elif libro[1] == 'Sherlock Holmes' %}
+
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/sherlock.jpg'"
+            >
+
+            {% elif libro[1] == 'Frankenstein' %}
+
+            <img
+                class="book-img"
+                src="{{ url_for('static', filename=libro[6]) }}"
+                alt="{{ libro[1] }}"
+                onerror="this.src='/static/img/frankenstein.jpg'"
+            >
+
+            {% else %}
+
+            <img
+                class="book-img"
+                src="/static/img/principito.jpg"
+                alt="Libro"
+            >
+
+            {% endif %}
+
+            <div class="book-info">
+
+                <h3>{{ libro[1] }}</h3>
+
+                <p>{{ libro[2] }}</p>
+
+                <small>{{ libro[3] }}</small>
+
+                <p>
+                    <b>Total:</b> {{ libro[4] }}
+                </p>
+
+                <p>
+                    <b>Prestados:</b> {{ libro[5] }}
+                </p>
+
+                <p class="precio-libro">
+                    <b>Valor préstamo:</b> ${{ libro[8] }}
+                </p>
+
+                <p class="available">
+                    <b>Disponibles:</b>
+                    {{ libro[4] - libro[5] }}
+                </p>
+
+                <div class="buttons">
+
+                    {% if estado == 'prestados' %}
 
                         {% if libro[0] in libros_prestados_usuario %}
 
@@ -352,27 +340,56 @@
 
                         {% endif %}
 
+                    {% else %}
 
-                        <a
-                            class="btn-pdf"
-                            href="{{ url_for('static', filename='pdfs/' ~ libro[7]) }}"
-                            target="_blank"
-                        >
-                            📖 Ver PDF
-                        </a>
+                        {% if libro[4] - libro[5] > 0 %}
 
-                    </div>
+                            <a
+                                class="btn-prestar"
+                                href="{{ url_for('prestar', id=libro[0]) }}"
+                            >
+                                Prestar
+                            </a>
+
+                        {% endif %}
+
+                        {% if libro[0] in libros_prestados_usuario %}
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('devolver', id=libro[0]) }}"
+                                style="display: inline;"
+                            >
+                                <button
+                                    type="submit"
+                                    class="btn-devolver"
+                                >
+                                    Devolver
+                                </button>
+                            </form>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                    <a
+                        class="btn-pdf"
+                        href="{{ url_for('static', filename='pdfs/' ~ libro[7]) }}"
+                        target="_blank"
+                    >
+                        📖 Ver PDF
+                    </a>
 
                 </div>
 
             </div>
 
-            {% endfor %}
-
         </div>
 
-    </section>
+        {% endfor %}
 
-</main>
+    </div>
+
+</section>
 
 {% endblock %}

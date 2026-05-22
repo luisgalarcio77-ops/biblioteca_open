@@ -981,33 +981,68 @@ def inicio():
 
     cur = mysql.connection.cursor()
 
-    query = """
-        SELECT id, titulo, autor, categoria, total, prestados, imagen, pdf, precio_prestamo
-        FROM libros
-        WHERE 1=1
-    """
-
     valores = []
 
-    if buscar:
-        query += """
-            AND (
-                titulo LIKE %s
-                OR autor LIKE %s
-                OR categoria LIKE %s
-            )
-        """
-        valores.extend([f"%{buscar}%", f"%{buscar}%", f"%{buscar}%"])
-
-    if categoria:
-        query += " AND categoria = %s"
-        valores.append(categoria)
-
     if estado == "prestados":
-        query += " AND prestados > 0"
 
-    if estado == "disponibles":
-        query += " AND total > prestados"
+        query = """
+            SELECT 
+                l.id,
+                l.titulo,
+                l.autor,
+                l.categoria,
+                l.total,
+                l.prestados,
+                l.imagen,
+                l.pdf,
+                l.precio_prestamo
+            FROM libros l
+            INNER JOIN prestamos p
+                ON l.id = p.libro_id
+            WHERE p.usuario_id = %s
+            AND p.estado = 'prestado'
+        """
+
+        valores = [usuario_id]
+
+        if buscar:
+            query += """
+                AND (
+                    l.titulo LIKE %s
+                    OR l.autor LIKE %s
+                    OR l.categoria LIKE %s
+                )
+            """
+            valores.extend([f"%{buscar}%", f"%{buscar}%", f"%{buscar}%"])
+
+        if categoria:
+            query += " AND l.categoria = %s"
+            valores.append(categoria)
+
+    else:
+
+        query = """
+            SELECT id, titulo, autor, categoria, total, prestados, imagen, pdf, precio_prestamo
+            FROM libros
+            WHERE 1=1
+        """
+
+        if buscar:
+            query += """
+                AND (
+                    titulo LIKE %s
+                    OR autor LIKE %s
+                    OR categoria LIKE %s
+                )
+            """
+            valores.extend([f"%{buscar}%", f"%{buscar}%", f"%{buscar}%"])
+
+        if categoria:
+            query += " AND categoria = %s"
+            valores.append(categoria)
+
+        if estado == "disponibles":
+            query += " AND total > prestados"
 
     cur.execute(query, valores)
     libros = cur.fetchall()
@@ -1046,7 +1081,6 @@ def inicio():
         estado=estado,
         libros_prestados_usuario=libros_prestados_usuario
     )
-
 
 # ---------------- PRESTAR ----------------
 
