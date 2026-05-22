@@ -24,18 +24,16 @@ app.config["MAIL_PORT"] = 587
 app.config["MAIL_USE_TLS"] = True
 app.config["MAIL_USE_SSL"] = False
 
-app.config["MAIL_USERNAME"] = "ac2dd3001@smtp-brevo.com"
-app.config["MAIL_PASSWORD"] = "kadQ5f0MI2xr94vD"
+app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 
 app.config["MAIL_DEFAULT_SENDER"] = "virtualbiblioteca006@gmail.com"
-
 app.config["MAIL_DEBUG"] = True
 app.config["MAIL_TIMEOUT"] = 10
 
 mail = Mail(app)
 
 CORREO_ADMIN = "virtualbiblioteca006@gmail.com"
-
 
 @app.route("/")
 def index():
