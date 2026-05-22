@@ -20,7 +20,7 @@ app.config['MYSQL_PORT'] = int(os.getenv('MYSQLPORT', 3306))
 mysql = MySQL(app)
 # ---------------- CORREO ----------------
 app.config["MAIL_SERVER"] = "smtp-relay.brevo.com"
-app.config["MAIL_PORT"] = 587
+app.config["MAIL_PORT"] = 2525
 app.config["MAIL_USE_TLS"] = True
 app.config["MAIL_USE_SSL"] = False
 
@@ -28,8 +28,10 @@ app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
 app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 
 app.config["MAIL_DEFAULT_SENDER"] = "virtualbiblioteca006@gmail.com"
-app.config["MAIL_DEBUG"] = True
+
 app.config["MAIL_TIMEOUT"] = 10
+app.config["MAIL_MAX_EMAILS"] = None
+app.config["MAIL_ASCII_ATTACHMENTS"] = False
 
 mail = Mail(app)
 
