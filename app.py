@@ -28,6 +28,7 @@ app.config["MAIL_USERNAME"] = "virtualbiblioteca006@gmail.com"
 app.config["MAIL_PASSWORD"] = "gxue jxmg wjev euqw"
 app.config["MAIL_DEFAULT_SENDER"] = "virtualbiblioteca006@gmail.com"
 app.config["MAIL_DEBUG"] = True
+app.config["MAIL_TIMEOUT"] = 10
 
 mail = Mail(app)
 
