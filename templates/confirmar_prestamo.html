@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="form-solicitud">
+
+    <div class="solicitud-card confirmar-card">
+
+        <h1>📚 Solicitar préstamo</h1>
+
+        <h3>{{ libro[1] }}</h3>
+
+        <p>
+            Complete únicamente la dirección donde desea recibir el libro.
+        </p>
+
+        <p class="precio-confirmar">
+            Este préstamo tiene un valor de <b>${{ libro[8] }}</b>.
+        </p>
+
+        <p>
+            Debe cancelar este valor al domiciliario cuando reciba el libro.
+        </p>
+
+        <form method="POST">
+
+            <input
+                type="text"
+                name="direccion"
+                placeholder="Dirección de entrega"
+                required
+            >
+
+            <button type="submit" class="btn-enviar">
+                ✅ Confirmar solicitud
+            </button>
+
+        </form>
+
+        <a href="{{ url_for('inicio') }}" class="btn-regresar">
+            ← Volver al catálogo
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="admin-panel">
+
+    <div class="breadcrumbs">
+        <a href="{{ url_for('admin_panel') }}">Admin</a> /
+        <a href="{{ url_for('admin_libros') }}">Libros</a> /
+        <span>Editar libro</span>
+    </div>
+
+    <div class="admin-header">
+        <div>
+            <h1>Editar libro</h1>
+            <p>Modificar información del libro seleccionado.</p>
+        </div>
+
+        <a href="{{ url_for('admin_libros') }}">Volver</a>
+    </div>
+
+    <div class="admin-form-card">
+
+        <form method="POST" class="admin-form-grid">
+
+            <input
+                type="text"
+                name="titulo"
+                value="{{ libro[1] }}"
+                placeholder="Título"
+                required
+            >
+
+            <input
+                type="text"
+                name="autor"
+                value="{{ libro[2] }}"
+                placeholder="Autor"
+                required
+            >
+
+            <input
+                type="text"
+                name="categoria"
+                value="{{ libro[3] }}"
+                placeholder="Categoría"
+                required
+            >
+
+            <input
+                type="number"
+                name="total"
+                value="{{ libro[4] }}"
+                min="1"
+                required
+            >
+
+            <input
+                type="text"
+                name="imagen"
+                value="{{ libro[6] }}"
+                placeholder="Ruta imagen"
+            >
+
+            <input
+                type="text"
+                name="pdf"
+                value="{{ libro[7] }}"
+                placeholder="Archivo PDF"
+            >
+
+            <button type="submit">
+                Guardar cambios
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}

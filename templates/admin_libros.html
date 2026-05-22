@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="admin-panel">
+
+    <div class="breadcrumbs">
+        <a href="{{ url_for('admin_panel') }}">Admin</a> /
+        <span>Libros</span>
+    </div>
+
+    <div class="admin-header">
+        <div>
+            <h1>Gestionar libros</h1>
+            <p>Crear, editar, eliminar y administrar libros.</p>
+        </div>
+
+        <a href="{{ url_for('admin_panel') }}">Volver</a>
+    </div>
+
+    <div class="admin-form-card">
+        <h3>Crear nuevo libro</h3>
+
+        <form method="POST" action="{{ url_for('admin_crear_libro') }}" class="admin-form-grid">
+
+            <input
+                type="text"
+                name="titulo"
+                placeholder="Título"
+                required
+            >
+
+            <input
+                type="text"
+                name="autor"
+                placeholder="Autor"
+                required
+            >
+
+            <input
+                type="text"
+                name="categoria"
+                placeholder="Categoría"
+                required
+            >
+
+            <input
+                type="number"
+                name="total"
+                placeholder="Cantidad total"
+                min="1"
+                required
+            >
+
+            <input
+                type="text"
+                name="imagen"
+                placeholder="Ruta imagen: img/libro.jpg"
+            >
+
+            <input
+                type="text"
+                name="pdf"
+                placeholder="Archivo PDF: libro.pdf"
+            >
+
+            <input
+                type="number"
+                name="precio_prestamo"
+                placeholder="Valor préstamo"
+                min="1000"
+                required
+            >
+
+            <button type="submit">
+                Crear libro
+            </button>
+
+        </form>
+    </div>
+
+    <div class="admin-section">
+
+        <h2>Libros registrados</h2>
+
+        <table class="admin-table">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Libro</th>
+                    <th>Autor</th>
+                    <th>Categoría</th>
+                    <th>Total</th>
+                    <th>Prestados</th>
+                    <th>Valor</th>
+                    <th>Imagen</th>
+                    <th>PDF</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for l in libros %}
+
+                <tr>
+
+                    <td>{{ l[0] }}</td>
+                    <td>{{ l[1] }}</td>
+                    <td>{{ l[2] }}</td>
+                    <td>{{ l[3] }}</td>
+                    <td>{{ l[4] }}</td>
+                    <td>{{ l[5] }}</td>
+
+                    <td class="valor-tabla">
+                        ${{ l[8] }}
+                    </td>
+
+                    <td>{{ l[6] }}</td>
+                    <td>{{ l[7] }}</td>
+
+                    <td>
+
+                        <a
+                            class="btn-editar"
+                            href="{{ url_for('editar_libro', id=l[0]) }}"
+                        >
+                            Editar
+                        </a>
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('eliminar_libro', id=l[0]) }}"
+                            class="form-eliminar form-inline"
+                        >
+
+                            <button
+                                type="submit"
+                                class="btn-eliminar"
+                            >
+                                Eliminar
+                            </button>
+
+                        </form>
+
+                    </td>
+
+                </tr>
+
+                {% else %}
+
+                <tr>
+                    <td colspan="10">
+                        No hay libros registrados.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+{% endblock %}

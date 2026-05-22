@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="admin-panel">
+
+    <div class="admin-header">
+        <div>
+            <h1>Panel de Administrador</h1>
+            <p>Bienvenido al sistema administrativo de MY BIBLIOTECA.</p>
+        </div>
+    </div>
+
+    <div class="admin-stats">
+
+        <div class="admin-stat-card">
+            <span>👥</span>
+            <h3>Usuarios</h3>
+            <strong>{{ total_usuarios }}</strong>
+        </div>
+
+        <div class="admin-stat-card">
+            <span>📚</span>
+            <h3>Títulos</h3>
+            <strong>{{ total_titulos }}</strong>
+        </div>
+
+        <div class="admin-stat-card">
+            <span>📖</span>
+            <h3>Total libros</h3>
+            <strong>{{ total_libros }}</strong>
+        </div>
+
+        <div class="admin-stat-card">
+            <span>📦</span>
+            <h3>Prestados</h3>
+            <strong>{{ total_prestados }}</strong>
+        </div>
+
+        <div class="admin-stat-card">
+            <span>✅</span>
+            <h3>Disponibles</h3>
+            <strong>{{ disponibles }}</strong>
+        </div>
+
+        <div class="admin-stat-card">
+            <span>💰</span>
+            <h3>Ganancias</h3>
+            <strong>${{ total_ganado }}</strong>
+        </div>
+
+    </div>
+
+    <div class="admin-actions">
+
+        <a href="{{ url_for('admin_usuarios') }}" class="admin-action-card">
+            <span>👤</span>
+            <h3>Gestionar usuarios</h3>
+            <p>Ver y eliminar usuarios registrados.</p>
+        </a>
+
+        <a href="{{ url_for('admin_libros') }}" class="admin-action-card">
+            <span>📘</span>
+            <h3>Gestionar libros</h3>
+            <p>Administrar libros, cantidades, imágenes y PDF.</p>
+        </a>
+
+        <a href="{{ url_for('admin_solicitudes') }}" class="admin-action-card">
+            <span>📋</span>
+            <h3>Ver solicitudes</h3>
+            <p>Revisar préstamos y devoluciones realizadas.</p>
+        </a>
+
+        <a href="{{ url_for('admin_ganancias') }}" class="admin-action-card">
+            <span>💰</span>
+            <h3>Historial de ganancias</h3>
+            <p>Ver todos los valores ganados por préstamos.</p>
+        </a>
+
+    </div>
+
+    <div class="admin-section" id="solicitudes">
+
+        <h2>Solicitudes recientes</h2>
+
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Libro</th>
+                    <th>Usuario</th>
+                    <th>Correo</th>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Valor</th>
+                    <th>Fecha préstamo</th>
+                    <th>Fecha devolución</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for s in solicitudes %}
+                <tr>
+                    <td>{{ s[0] }}</td>
+                    <td>{{ s[1] }}</td>
+                    <td>{{ s[2] }}</td>
+                    <td>{{ s[3] }}</td>
+                    <td>{{ s[4] }}</td>
+
+                    <td>
+                        {% if s[5] == "solicitado" %}
+                            <span class="tipo-prestamo">Solicitado</span>
+
+                        {% elif s[5] == "prestado" %}
+                            <span class="tipo-prestamo">Prestado</span>
+
+                        {% else %}
+                            <span class="tipo-devolucion">Devuelto</span>
+                        {% endif %}
+                    </td>
+
+                    <td class="valor-tabla">
+                        ${{ s[8] }}
+                    </td>
+
+                    <td>{{ s[6] }}</td>
+
+                    <td>
+                        {{ s[7] if s[7] else "Sin devolver" }}
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+</section>
+
+{% endblock %}

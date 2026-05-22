@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="auth-bg">
+    <div class="auth-box registro-box">
+
+        <div class="auth-left">
+            <div class="icon">🪪</div>
+
+            <h2>Únete a MY BIBLIOTECA</h2>
+
+            <p>
+                Crea tu cuenta gratuita y disfruta de miles de libros digitales.
+                Toma prestados, lee y aprende sin límites.
+            </p>
+        </div>
+
+        <div class="auth-right">
+
+            <h1>Crear cuenta</h1>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for msg in messages %}
+                        <div class="alert">
+                            {{ msg }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+
+                <label>Nombre de usuario</label>
+
+                <input
+                    type="text"
+                    name="usuario"
+                    placeholder="Elige un nombre de usuario"
+                    value="{{ usuario or '' }}"
+                    required
+                >
+
+                <label>Correo electrónico</label>
+
+                <input
+                    type="email"
+                    name="correo"
+                    placeholder="Ingresa tu correo electrónico"
+                    value="{{ correo or '' }}"
+                    required
+                >
+
+                <label>Número de celular</label>
+
+                <input
+                    type="text"
+                    name="celular"
+                    placeholder="Ingresa tu número de celular"
+                    value="{{ celular or '' }}"
+                    inputmode="numeric"
+                    pattern="[0-9]{10}"
+                    maxlength="10"
+                    required
+                >
+
+                <label>Contraseña</label>
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Crea una contraseña segura"
+                    required
+                >
+
+                <label>Confirmar contraseña</label>
+
+                <input
+                    type="password"
+                    name="confirmar_password"
+                    placeholder="Confirma tu contraseña"
+                    required
+                >
+
+                <div class="check">
+
+                    <input type="checkbox" required>
+
+                    <span>
+                        Acepto los términos de servicio y la política de privacidad
+                    </span>
+
+                </div>
+
+                <div class="check">
+
+                    <input type="checkbox">
+
+                    <span>
+                        Quiero recibir noticias y actualizaciones
+                    </span>
+
+                </div>
+
+                <button type="submit">
+                    Registrarme
+                </button>
+
+            </form>
+
+            <p>
+                ¿Ya tienes cuenta?
+
+                <a href="{{ url_for('login') }}">
+                    Inicia sesión
+                </a>
+            </p>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="admin-panel">
+
+    <div class="admin-header">
+        <div>
+            <h1>💰 Historial de ganancias</h1>
+
+            <p>
+                Listado de ganancias obtenidas por préstamos de libros.
+            </p>
+
+            <h2 class="total-ganancias">
+                Total ganado: ${{ total_ganado }}
+            </h2>
+        </div>
+
+        <a href="{{ url_for('admin_panel') }}">
+            Volver
+        </a>
+    </div>
+
+    <div class="admin-section">
+
+        <table class="admin-table">
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Libro</th>
+                    <th>Usuario</th>
+                    <th>Valor</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for g in ganancias %}
+
+                <tr>
+
+                    <td>{{ g[0] }}</td>
+
+                    <td>{{ g[1] }}</td>
+
+                    <td>{{ g[2] }}</td>
+
+                    <td class="valor-tabla">
+                        ${{ g[3] }}
+                    </td>
+
+                    <td>{{ g[4] }}</td>
+
+                    <td>{{ g[5] }}</td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+{% endblock %}

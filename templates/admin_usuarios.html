@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="admin-panel">
+
+    <div class="admin-header">
+        <div>
+            <h1>Gestionar usuarios</h1>
+            <p>Revisar y eliminar usuarios registrados.</p>
+        </div>
+
+        <a href="{{ url_for('admin_panel') }}">Volver</a>
+    </div>
+
+    <div class="admin-section">
+
+        <h2>Usuarios registrados</h2>
+
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Correo</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for u in usuarios %}
+                <tr>
+                    <td>{{ u[0] }}</td>
+                    <td>{{ u[1] }}</td>
+                    <td>{{ u[2] }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('eliminar_usuario', id=u[0]) }}">
+                            <button type="submit" class="btn-eliminar">
+                                Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+
+                {% else %}
+                <tr>
+                    <td colspan="4">
+                        No hay usuarios registrados.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+</section>
+
+{% endblock %}

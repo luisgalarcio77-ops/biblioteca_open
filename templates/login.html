@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="auth-bg">
+    <div class="auth-box">
+
+        <div class="auth-left">
+            <div class="icon">📖</div>
+            <h2>Bienvenido de nuevo</h2>
+            <p>Inicia sesión para continuar explorando nuestra biblioteca</p>
+            <div class="drawing">📚</div>
+        </div>
+
+        <div class="auth-right">
+            <div class="breadcrumbs">
+                <a href="{{ url_for('login') }}">Inicio</a> /
+            </div>
+
+            <h1>Iniciar sesión</h1>
+
+            <form method="POST">
+                <label>Correo electrónico</label>
+                <input type="email" name="correo" placeholder="Ingresa tu correo electrónico" required>
+
+                <label>Contraseña</label>
+                <input type="password" name="password" placeholder="Ingresa tu contraseña" required>
+
+                <button type="submit">Iniciar sesión</button>
+            </form>
+
+            <p>
+                <a href="{{ url_for('recuperar_password') }}">¿Olvidaste tu contraseña?</a>
+            </p>
+
+            <p>
+                ¿No tienes cuenta?
+                <a href="{{ url_for('registro') }}">Crear cuenta</a>
+            </p>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

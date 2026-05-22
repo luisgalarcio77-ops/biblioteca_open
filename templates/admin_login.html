@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="admin-login-bg">
+
+    <div class="admin-login-container">
+
+        <!-- IZQUIERDA -->
+        <div class="admin-login-left">
+
+            <div class="books-floating">
+                📚
+            </div>
+
+        </div>
+
+        <!-- DERECHA -->
+        <div class="admin-login-card">
+
+            <div class="admin-icon">
+                👤⚙️
+            </div>
+
+            <h1>Administrador</h1>
+
+            <p>
+                Inicia sesión para gestionar el sistema
+            </p>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for msg in messages %}
+                        <div class="admin-alert">
+                            🔒 {{ msg }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+
+                <div class="admin-input-group">
+
+                    <span>👤</span>
+
+                    <input
+                        type="text"
+                        name="usuario"
+                        placeholder="Usuario administrador"
+                        required
+                    >
+
+                </div>
+
+                <div class="admin-input-group">
+
+                    <span>🔐</span>
+
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Contraseña"
+                        required
+                    >
+
+                </div>
+
+                <button type="submit">
+                    ↪ Entrar
+                </button>
+
+            </form>
+
+            <a
+                class="admin-volver"
+                href="{{ url_for('login') }}"
+            >
+                ← Volver al inicio
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

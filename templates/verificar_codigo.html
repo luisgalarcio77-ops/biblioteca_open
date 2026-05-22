@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="login-bg">
+
+    <div class="login-box">
+
+        <h1>🔐 Verificar código</h1>
+
+        <p>
+            Ingresa el código enviado a tu correo y crea tu nueva contraseña.
+        </p>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <div class="alert">
+                        {{ msg }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+
+            <input
+                type="text"
+                name="codigo"
+                placeholder="Código de recuperación"
+                required
+            >
+
+            <input
+                type="password"
+                name="password"
+                placeholder="Nueva contraseña"
+                required
+            >
+
+            <input
+                type="password"
+                name="confirmar_password"
+                placeholder="Confirmar contraseña"
+                required
+            >
+
+            <button type="submit">
+                Cambiar contraseña
+            </button>
+
+        </form>
+
+        <a href="{{ url_for('login') }}">
+            ← Volver al login
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

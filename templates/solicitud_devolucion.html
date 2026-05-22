@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="form-solicitud">
+
+    <div class="solicitud-card devolucion">
+
+        <h1>📕 Solicitar devolución</h1>
+
+        <h3>{{ libro[1] }}</h3>
+
+        <p>
+            Completa los datos para recoger el libro en tu domicilio.
+        </p>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <div class="alert">
+                        {{ msg }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+
+            <input
+                type="text"
+                name="nombre"
+                placeholder="Nombre completo"
+                required
+            >
+
+            <input
+                type="email"
+                name="correo"
+                placeholder="Correo electrónico"
+                required
+            >
+
+            <input
+                type="text"
+                name="celular"
+                placeholder="Número de celular"
+                required
+            >
+
+            <input
+                type="text"
+                name="direccion"
+                placeholder="Dirección de recogida"
+                required
+            >
+
+            <button
+                type="submit"
+                class="btn-enviar"
+            >
+                📦 Solicitar devolución
+            </button>
+
+        </form>
+
+        <a
+            href="{{ url_for('inicio') }}"
+            class="btn-regresar"
+        >
+            ← Volver al catálogo
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

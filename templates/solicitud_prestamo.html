@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="form-solicitud">
+
+    <div class="solicitud-card confirmar-card">
+
+        <h1>📚 Solicitar préstamo</h1>
+
+        <h3>{{ libro[1] }}</h3>
+
+        <p>
+            ¿Quiere solicitar prestar este libro?
+        </p>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <div class="alert">
+                        {{ msg }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <button type="submit" class="btn-enviar">
+                ✅ Confirmar solicitud
+            </button>
+        </form>
+
+        <a href="{{ url_for('inicio') }}" class="btn-regresar">
+            ← Volver al catálogo
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}
