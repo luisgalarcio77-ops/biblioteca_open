@@ -1904,3 +1904,38 @@ a:active {
         animation: authEntrada 0.75s ease both;
     }
 }
+.estado-solicitado{
+    background:#f59e0b;
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.estado-enviado{
+    background:#2563eb;
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.estado-prestado{
+    background:#10b981;
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.estado-devuelto{
+    background:#6b7280;
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+}

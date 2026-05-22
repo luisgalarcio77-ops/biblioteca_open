@@ -108,49 +108,85 @@ def admin_login():
 
 @app.route("/admin_panel")
 def admin_panel():
+
     if "admin" not in session:
         flash("Debes iniciar sesión como administrador")
         return redirect(url_for("admin_login"))
 
     cur = mysql.connection.cursor()
 
+    # TOTAL USUARIOS
+
     cur.execute("SELECT COUNT(*) FROM usuarios")
     total_usuarios = cur.fetchone()[0] or 0
+
+    # TOTAL TÍTULOS
 
     cur.execute("SELECT COUNT(*) FROM libros")
     total_titulos = cur.fetchone()[0] or 0
 
+    # TOTAL LIBROS
+
     cur.execute("SELECT SUM(total) FROM libros")
     total_libros = cur.fetchone()[0] or 0
+
+    # TOTAL PRESTADOS
 
     cur.execute("SELECT SUM(prestados) FROM libros")
     total_prestados = cur.fetchone()[0] or 0
 
+    # DISPONIBLES
+
     disponibles = total_libros - total_prestados
+
+    # GANANCIAS
 
     cur.execute("""
         SELECT SUM(l.precio_prestamo)
         FROM prestamos p
         INNER JOIN libros l ON p.libro_id = l.id
-        WHERE p.estado IN ('prestado', 'devuelto')
+        WHERE p.estado IN (
+            'enviado',
+            'prestado',
+            'devuelto'
+        )
     """)
+
     total_ganado = cur.fetchone()[0] or 0
 
+    # SOLICITUDES
+
     cur.execute("""
-        SELECT 
+        SELECT
             p.id,
             l.titulo,
             u.usuario,
             u.correo,
             p.nombre_persona,
             p.estado,
-            p.fecha_prestamo,
-            p.fecha_devolucion
+
+            CASE
+                WHEN p.estado = 'enviado'
+                THEN p.fecha_envio
+
+                ELSE p.fecha_prestamo
+            END,
+
+            p.fecha_devolucion,
+
+            l.precio_prestamo
+
         FROM prestamos p
-        INNER JOIN libros l ON p.libro_id = l.id
-        INNER JOIN usuarios u ON p.usuario_id = u.id
+
+        INNER JOIN libros l
+            ON p.libro_id = l.id
+
+        INNER JOIN usuarios u
+            ON p.usuario_id = u.id
+
         ORDER BY p.id DESC
     """)
+
     solicitudes = cur.fetchall()
 
     cur.close()
@@ -165,7 +201,6 @@ def admin_panel():
         total_ganado=total_ganado,
         solicitudes=solicitudes
     )
-
 
 @app.route("/admin_logout")
 def admin_logout():
@@ -1393,12 +1428,16 @@ def logout():
     session.clear()
     flash("Sesión cerrada correctamente")
     return redirect(url_for("login"))
+
 @app.route("/admin_ganancias")
 def admin_ganancias():
+
     if "admin" not in session:
         return redirect(url_for("admin_login"))
 
     cur = mysql.connection.cursor()
+
+    # HISTORIAL DE GANANCIAS
 
     cur.execute("""
         SELECT
@@ -1407,21 +1446,48 @@ def admin_ganancias():
             u.usuario,
             l.precio_prestamo,
             p.estado,
-            p.fecha_prestamo
+
+            CASE
+                WHEN p.estado = 'enviado'
+                THEN p.fecha_envio
+
+                ELSE p.fecha_prestamo
+            END
+
         FROM prestamos p
-        INNER JOIN libros l ON p.libro_id = l.id
-        INNER JOIN usuarios u ON p.usuario_id = u.id
-        WHERE p.estado IN ('prestado', 'devuelto')
+
+        INNER JOIN libros l
+            ON p.libro_id = l.id
+
+        INNER JOIN usuarios u
+            ON p.usuario_id = u.id
+
+        WHERE p.estado IN (
+            'enviado',
+            'prestado',
+            'devuelto'
+        )
+
         ORDER BY p.id DESC
     """)
 
     ganancias = cur.fetchall()
 
+    # TOTAL GANADO
+
     cur.execute("""
         SELECT SUM(l.precio_prestamo)
+
         FROM prestamos p
-        INNER JOIN libros l ON p.libro_id = l.id
-        WHERE p.estado IN ('prestado', 'devuelto')
+
+        INNER JOIN libros l
+            ON p.libro_id = l.id
+
+        WHERE p.estado IN (
+            'enviado',
+            'prestado',
+            'devuelto'
+        )
     """)
 
     total_ganado = cur.fetchone()[0] or 0
@@ -1433,7 +1499,6 @@ def admin_ganancias():
         ganancias=ganancias,
         total_ganado=total_ganado
     )
-    return render_template("admin_ganancias.html", ganancias=ganancias)
 
 
 if __name__ == "__main__":

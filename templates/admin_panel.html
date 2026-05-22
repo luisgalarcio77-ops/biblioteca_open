@@ -93,7 +93,7 @@
                     <th>Nombre</th>
                     <th>Estado</th>
                     <th>Valor</th>
-                    <th>Fecha préstamo</th>
+                    <th>Fecha envío / préstamo</th>
                     <th>Fecha devolución</th>
                 </tr>
             </thead>
@@ -101,29 +101,66 @@
             <tbody>
                 {% for s in solicitudes %}
                 <tr>
+
                     <td>{{ s[0] }}</td>
+
                     <td>{{ s[1] }}</td>
+
                     <td>{{ s[2] }}</td>
+
                     <td>{{ s[3] }}</td>
+
                     <td>{{ s[4] }}</td>
 
                     <td>
+
                         {% if s[5] == "solicitado" %}
-                            <span class="tipo-prestamo">Solicitado</span>
+
+                            <span class="estado-solicitado">
+                                Solicitado
+                            </span>
+
+                        {% elif s[5] == "enviado" %}
+
+                            <span class="estado-enviado">
+                                Enviado
+                            </span>
 
                         {% elif s[5] == "prestado" %}
-                            <span class="tipo-prestamo">Prestado</span>
 
-                        {% else %}
-                            <span class="tipo-devolucion">Devuelto</span>
+                            <span class="estado-prestado">
+                                Prestado
+                            </span>
+
+                        {% elif s[5] == "devolucion_solicitada" %}
+
+                            <span class="tipo-devolucion">
+                                Devolución solicitada
+                            </span>
+
+                        {% elif s[5] == "recogida" %}
+
+                            <span class="estado-enviado">
+                                Recogida
+                            </span>
+
+                        {% elif s[5] == "devuelto" %}
+
+                            <span class="estado-devuelto">
+                                Devuelto
+                            </span>
+
                         {% endif %}
+
                     </td>
 
                     <td class="valor-tabla">
                         ${{ s[8] }}
                     </td>
 
-                    <td>{{ s[6] }}</td>
+                    <td>
+                        {{ s[6] if s[6] else "Sin confirmar" }}
+                    </td>
 
                     <td>
                         {{ s[7] if s[7] else "Sin devolver" }}
@@ -132,6 +169,7 @@
                 </tr>
                 {% endfor %}
             </tbody>
+
         </table>
 
     </div>
