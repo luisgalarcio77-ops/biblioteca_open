@@ -1643,3 +1643,264 @@ footer {
     font-size: 28px;
     font-weight: bold;
 }
+
+/* ANIMACIONES EXTRA */
+
+body {
+    animation: bodyEntrada 0.7s ease both;
+}
+
+@keyframes bodyEntrada {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    animation: navbarSlide 0.7s ease both;
+}
+
+@keyframes navbarSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-22px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.logo span {
+    animation: logoBadge 2.5s ease-in-out infinite;
+}
+
+@keyframes logoBadge {
+    0%, 100% {
+        transform: rotate(-5deg) scale(1);
+    }
+    50% {
+        transform: rotate(-2deg) scale(1.08);
+    }
+}
+
+.navbar nav a {
+    position: relative;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.navbar nav a:hover {
+    transform: translateY(-2px);
+}
+
+.book-card,
+.stat-card,
+.admin-stat-card,
+.admin-action-card,
+.admin-form-card,
+.login-box,
+.solicitud-card,
+.admin-login-card {
+    animation: cardEntrada 0.65s ease both;
+}
+
+@keyframes cardEntrada {
+    from {
+        opacity: 0;
+        transform: translateY(28px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.book-card img,
+.book-img {
+    transition: transform 0.45s ease, filter 0.45s ease, box-shadow 0.45s ease;
+}
+
+.book-card:hover img,
+.book-card:hover .book-img {
+    transform: scale(1.06) rotate(-1deg);
+    filter: brightness(1.05) contrast(1.08);
+    box-shadow: 0 14px 24px rgba(0,0,0,0.22);
+}
+
+.auth-bg,
+.admin-login-bg,
+.form-solicitud {
+    background-attachment: fixed;
+    animation: fondoZoom 14s ease-in-out infinite alternate;
+}
+
+@keyframes fondoZoom {
+    from { background-size: 100%; }
+    to { background-size: 108%; }
+}
+
+.auth-box {
+    animation: authEntrada 0.75s ease both, flotandoSuave 5s ease-in-out infinite;
+}
+
+@keyframes authEntrada {
+    from {
+        opacity: 0;
+        transform: translateY(32px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes flotandoSuave {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-7px); }
+}
+
+.drawing,
+.auth-left .icon,
+.admin-icon {
+    animation: iconFloat 3.4s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-8px) rotate(2deg);
+    }
+}
+
+.admin-table tr {
+    transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.admin-table tbody tr:hover {
+    transform: scale(1.01);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+    position: relative;
+    z-index: 2;
+}
+
+.estado-solicitado,
+.estado-enviado,
+.estado-prestado,
+.estado-devuelto,
+.tipo-prestamo,
+.tipo-devolucion,
+.available,
+.precio-libro,
+.precio-confirmar,
+.valor-tabla,
+.total-ganancias {
+    animation: estadoPulse 2.4s ease-in-out infinite;
+}
+
+@keyframes estadoPulse {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.17); }
+}
+
+.admin-header {
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.12), transparent);
+    transform: translateX(-100%);
+    animation: headerLight 4s ease-in-out infinite;
+}
+
+.admin-header > * {
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes headerLight {
+    0% { transform: translateX(-100%); }
+    50%, 100% { transform: translateX(100%); }
+}
+
+input,
+select {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.25s ease;
+}
+
+input:focus,
+select:focus {
+    transform: translateY(-2px);
+}
+
+.alert {
+    animation: alertaEntrada 0.55s ease both, alertaGlow 2.2s ease-in-out infinite;
+}
+
+@keyframes alertaEntrada {
+    from {
+        opacity: 0;
+        transform: translateY(-18px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes alertaGlow {
+    0%, 100% {
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+    50% {
+        box-shadow: 0 10px 26px rgba(5,118,184,0.18);
+    }
+}
+
+::selection {
+    background: #0576b8;
+    color: white;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #e7dfc4;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #0576b8, #111827);
+    border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #00a6ff, #374151);
+}
+
+button:active,
+a:active {
+    transform: scale(0.96);
+}
+
+@media (max-width: 750px) {
+    .auth-bg,
+    .admin-login-bg,
+    .form-solicitud {
+        animation: none;
+        background-size: cover;
+        background-attachment: scroll;
+    }
+
+    .auth-box {
+        animation: authEntrada 0.75s ease both;
+    }
+}
