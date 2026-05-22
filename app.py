@@ -1,10 +1,12 @@
+import pymysql
+pymysql.install_as_MySQLdb()
+
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_from_directory
 from flask_mysqldb import MySQL
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_mail import Mail, Message
 import os
 import random
-
 app = Flask(__name__)
 app.secret_key = "clave_secreta_open_library"
 
